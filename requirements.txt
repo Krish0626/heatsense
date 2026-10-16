@@ -1,0 +1,72 @@
+# =============================================================================
+# HeatSense AI — Consolidated Requirements
+# =============================================================================
+# This file lists ALL Python dependencies across the project.
+# Install into a single virtual environment from the repo root:
+#
+#   python -m venv .venv
+#   .venv\Scripts\activate          # Windows
+#   source .venv/bin/activate       # Linux / macOS
+#
+#   pip install -r requirements.txt
+#
+# ---------------------------------------------------------------------------
+# CUDA / GPU NOTICE
+# ---------------------------------------------------------------------------
+# XGBoost, LightGBM, and CatBoost can all use a CUDA-capable GPU.
+# The packages below install the CPU builds by default (works everywhere).
+#
+# After installing, verify CUDA is available:
+#   python -c "import xgboost as xgb, numpy as np; m=xgb.XGBRegressor(device='cuda',n_estimators=1); m.fit(np.array([[0.],[1.]]),np.array([0.,1.])); print('CUDA OK')"
+#
+# If you get an error, follow the CUDA setup section in README.md.
+# ---------------------------------------------------------------------------
+
+
+# -- Backend (FastAPI + PostGIS) ----------------------------------------------
+fastapi==0.115.*
+uvicorn[standard]==0.32.*
+pydantic==2.9.*
+pydantic-settings==2.6.*
+sqlalchemy==2.0.*
+geoalchemy2==0.16.*
+psycopg[binary]==3.2.*
+python-jose[cryptography]==3.3.*
+passlib[bcrypt]==1.7.*
+python-multipart==0.0.*
+email-validator>=2.0.0
+alembic>=1.13.0
+
+# -- ML / Data Pipeline -------------------------------------------------------
+numpy==1.26.*
+pandas==2.2.*
+pyarrow>=15.0.0
+scikit-learn==1.5.*
+
+# -- Geospatial ---------------------------------------------------------------
+shapely==2.0.*
+geopandas==1.0.*
+rasterio==1.3.*
+rasterstats==0.19.*
+osmnx==1.9.*
+earthengine-api==0.1.*
+
+# -- Gradient-boosting models -------------------------------------------------
+# CPU builds are installed by default; GPU acceleration is configured at
+# runtime via device="cuda" (XGBoost), device="gpu" (LightGBM), or
+# task_type="GPU" (CatBoost) — see README.md for CUDA setup.
+xgboost==2.1.*
+lightgbm==4.5.*
+catboost==1.2.*
+
+# -- Explainability & Optimization --------------------------------------------
+shap==0.46.*
+optuna==4.0.*
+pymoo==0.6.*
+
+# -- Visualization ------------------------------------------------------------
+matplotlib==3.9.*
+
+# -- Testing ------------------------------------------------------------------
+pytest==8.3.*
+httpx==0.27.*

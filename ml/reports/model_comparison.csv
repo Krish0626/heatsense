@@ -1,0 +1,17 @@
+season,model,split,mae,rmse,r2
+monsoon,seasonal_median,val,0.85,1.126169,-0.001382
+monsoon,linear_regression,val,0.833947,1.084513,0.071328
+monsoon,random_forest,val,0.520644,0.680123,0.634769
+post_monsoon,seasonal_median,val,0.811667,1.086151,-0.001809
+post_monsoon,linear_regression,val,0.820857,1.075428,0.017875
+post_monsoon,random_forest,val,0.468798,0.650818,0.640314
+pre_monsoon,seasonal_median,val,1.331954,1.669156,-0.004069
+pre_monsoon,linear_regression,val,1.317007,1.647722,0.021552
+pre_monsoon,random_forest,val,0.701094,0.985794,0.649779
+winter,seasonal_median,val,0.746954,1.076975,-2e-06
+winter,linear_regression,val,0.7498,1.088836,-0.022149
+winter,random_forest,val,0.527689,0.824214,0.414308
+monsoon,xgboost,val,0.505447,0.675584,0.639628
+post_monsoon,xgboost,val,0.4837,0.660914,0.629068
+pre_monsoon,xgboost,val,0.739171,1.021752,0.623764
+winter,xgboost,val,0.553343,0.859457,0.363149

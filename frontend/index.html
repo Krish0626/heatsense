@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO -->
+    <title>HeatSense AI — Urban Heat Mitigation Decision Support · Surat</title>
+    <meta
+      name="description"
+      content="HeatSense AI maps land surface temperature (LST) across Surat's 100 m grid, identifies urban heat hotspots using XGBoost and TreeSHAP, and recommends cost-effective cooling interventions via NSGA-II optimisation."
+    />
+    <meta name="theme-color" content="#0a0f1e" />
+
+    <!-- Leaflet CSS (loaded before app CSS to allow our overrides to win) -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

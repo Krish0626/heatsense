@@ -1,0 +1,66 @@
+============================================================
+HEATSENSE AI -- DATASET AUDIT
+============================================================
+
+Rows    : 3,472
+Columns : 21
+Duplicate rows           : 0
+Duplicate cell+season    : 0
+
+-- Season distribution --
+  winter              : 868
+  pre_monsoon         : 868
+  monsoon             : 868
+  post_monsoon        : 868
+
+-- Target: observed_lst_c --
+  Mean   : 34.5787 C
+  Median : 34.115 C
+  Std    : 2.9747 C
+  Min    : 27.35 C
+  Max    : 42.86 C
+  Outliers (IQR) : 21
+
+-- Target by season --
+  monsoon         : mean=34.3982 std=1.0998 [30.81 to 37.81]
+  post_monsoon    : mean=33.9999 std=1.0698 [30.71 to 37.33]
+  pre_monsoon     : mean=38.7034 std=1.7218 [33.65 to 42.86]
+  winter          : mean=31.2135 std=1.1694 [27.35 to 35.0]
+
+-- Spatial coverage --
+  Unique grid cells : 868
+  X extent : 28356 m (28.4 km)
+  Y extent : 27239 m (27.2 km)
+
+-- Missing values --
+  None -- all features complete.
+
+-- Infinite values --
+  None.
+
+-- Feature correlations with target --
+  ndvi                     : r=-0.1038  outliers=0
+  ndbi                     : r=+0.0178  outliers=73
+  mndwi                    : r=-0.0006  outliers=527
+  albedo                   : r=+0.0346  outliers=134
+  built_up_fraction        : r=-0.0037  outliers=36
+  impervious_fraction      : r=-0.0037  outliers=36
+  bare_fraction            : r=+0.0344  outliers=0
+  vegetation_fraction      : r=-0.0303  outliers=897
+  water_fraction           : r=-0.0031  outliers=536
+  road_density             : r=+0.0009  outliers=219
+  elevation_m              : r=-0.0896  outliers=0
+  dist_to_water_m          : r=+0.0014  outliers=144
+  dist_to_coast_m          : r=+0.0608  outliers=0
+  population_density       : r=-0.0296  outliers=35
+  night_lights             : r=-0.0188  outliers=76
+
+-- High inter-feature correlations (|r| ≥ 0.85) --
+  built_up_fraction vs impervious_fraction: |r|=1.0000
+  albedo vs bare_fraction: |r|=0.9747
+  impervious_fraction vs road_density: |r|=0.9523
+  built_up_fraction vs road_density: |r|=0.9523
+  albedo vs vegetation_fraction: |r|=0.9136
+  ndbi vs vegetation_fraction: |r|=0.8763
+
+============================================================

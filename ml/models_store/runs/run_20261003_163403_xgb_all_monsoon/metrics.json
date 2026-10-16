@@ -1,0 +1,20 @@
+{
+  "season": "monsoon",
+  "train": {
+    "mae": 0.18409,
+    "rmse": 0.243982,
+    "r2": 0.950096
+  },
+  "val": {
+    "mae": 0.505447,
+    "rmse": 0.675584,
+    "r2": 0.639628
+  },
+  "overfitting": {
+    "flag": true,
+    "r2_gap": 0.3105,
+    "rmse_ratio": 2.769
+  },
+  "best_iteration": 122,
+  "training_time_s": 0.51
+}

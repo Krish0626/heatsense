@@ -1,0 +1,46 @@
+{
+  "run_id": "run_20261003_162347_xgb_all_pre_monsoon",
+  "season": "pre_monsoon",
+  "model": "xgboost",
+  "feature_cols": [
+    "ndvi",
+    "ndbi",
+    "mndwi",
+    "albedo",
+    "built_up_fraction",
+    "bare_fraction",
+    "vegetation_fraction",
+    "water_fraction",
+    "road_density",
+    "elevation_m",
+    "dist_to_water_m",
+    "dist_to_coast_m",
+    "population_density",
+    "night_lights"
+  ],
+  "target_col": "observed_lst_c",
+  "hyperparams": {
+    "device": "cuda",
+    "tree_method": "hist",
+    "n_estimators": 1000,
+    "learning_rate": 0.05,
+    "max_depth": 6,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 3,
+    "reg_alpha": 0.1,
+    "reg_lambda": 1.0,
+    "gamma": 0.0,
+    "random_state": 42,
+    "eval_metric": "rmse",
+    "early_stopping_rounds": 50
+  },
+  "random_seed": 42,
+  "versions": {
+    "python": "3.11.0",
+    "xgboost": "2.1.4",
+    "numpy": "1.26.4",
+    "pandas": "2.2.3"
+  },
+  "device": "cuda"
+}

@@ -1,0 +1,36 @@
+# Virtual environments (must be installed per-machine via requirements.txt)
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Node modules & build artifacts (installed per-machine via npm install)
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Large models exceeding GitHub's 100MB hard limit
+ml/models_store/deep_learning/*.pt
+
+# Raw satellite rasters (multi-gigabyte datasets downloaded per data/raw/README.md)
+data/raw/*
+!data/raw/README.md
+!data/raw/.gitkeep
+*.tif
+*.tiff
+
+# Environment variables & local credentials
+.env
+*.env
+!.env.example
+
+# Temporary logs & editor configs
+.DS_Store
+.idea/
+.vscode/
+*.log
+catboost_info/
+

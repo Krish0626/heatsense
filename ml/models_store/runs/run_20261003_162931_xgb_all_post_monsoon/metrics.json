@@ -1,0 +1,20 @@
+{
+  "season": "post_monsoon",
+  "train": {
+    "mae": 0.198402,
+    "rmse": 0.265696,
+    "r2": 0.937737
+  },
+  "val": {
+    "mae": 0.4837,
+    "rmse": 0.660914,
+    "r2": 0.629068
+  },
+  "overfitting": {
+    "flag": true,
+    "r2_gap": 0.3087,
+    "rmse_ratio": 2.4875
+  },
+  "best_iteration": 106,
+  "training_time_s": 0.48
+}

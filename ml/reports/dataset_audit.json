@@ -1,0 +1,296 @@
+{
+  "rows": 3472,
+  "columns": [
+    "cell_id",
+    "season",
+    "centroid_x",
+    "centroid_y",
+    "observed_lst_c",
+    "ndvi",
+    "ndbi",
+    "mndwi",
+    "albedo",
+    "built_up_fraction",
+    "impervious_fraction",
+    "bare_fraction",
+    "vegetation_fraction",
+    "water_fraction",
+    "road_density",
+    "elevation_m",
+    "dist_to_water_m",
+    "dist_to_coast_m",
+    "population_density",
+    "night_lights",
+    "valid_obs_count"
+  ],
+  "n_columns": 21,
+  "dtypes": {
+    "cell_id": "int64",
+    "season": "object",
+    "centroid_x": "float64",
+    "centroid_y": "float64",
+    "observed_lst_c": "float64",
+    "ndvi": "float64",
+    "ndbi": "float64",
+    "mndwi": "float64",
+    "albedo": "float64",
+    "built_up_fraction": "float64",
+    "impervious_fraction": "float64",
+    "bare_fraction": "float64",
+    "vegetation_fraction": "float64",
+    "water_fraction": "float64",
+    "road_density": "float64",
+    "elevation_m": "float64",
+    "dist_to_water_m": "float64",
+    "dist_to_coast_m": "float64",
+    "population_density": "float64",
+    "night_lights": "float64",
+    "valid_obs_count": "int64"
+  },
+  "missing_values": {
+    "cell_id": 0,
+    "season": 0,
+    "centroid_x": 0,
+    "centroid_y": 0,
+    "observed_lst_c": 0,
+    "ndvi": 0,
+    "ndbi": 0,
+    "mndwi": 0,
+    "albedo": 0,
+    "built_up_fraction": 0,
+    "impervious_fraction": 0,
+    "bare_fraction": 0,
+    "vegetation_fraction": 0,
+    "water_fraction": 0,
+    "road_density": 0,
+    "elevation_m": 0,
+    "dist_to_water_m": 0,
+    "dist_to_coast_m": 0,
+    "population_density": 0,
+    "night_lights": 0,
+    "valid_obs_count": 0
+  },
+  "infinite_values": {},
+  "duplicate_rows": 0,
+  "duplicate_cell_season": 0,
+  "season_distribution": {
+    "winter": 868,
+    "pre_monsoon": 868,
+    "monsoon": 868,
+    "post_monsoon": 868
+  },
+  "unique_cells": 868,
+  "spatial_extent_m": {
+    "x_range": 28356.4,
+    "y_range": 27239.4
+  },
+  "target": {
+    "column": "observed_lst_c",
+    "mean": 34.5787,
+    "median": 34.115,
+    "std": 2.9747,
+    "min": 27.35,
+    "max": 42.86,
+    "n_outliers_iqr": 21
+  },
+  "target_by_season": {
+    "monsoon": {
+      "mean": 34.3982,
+      "std": 1.0998,
+      "min": 30.81,
+      "max": 37.81
+    },
+    "post_monsoon": {
+      "mean": 33.9999,
+      "std": 1.0698,
+      "min": 30.71,
+      "max": 37.33
+    },
+    "pre_monsoon": {
+      "mean": 38.7034,
+      "std": 1.7218,
+      "min": 33.65,
+      "max": 42.86
+    },
+    "winter": {
+      "mean": 31.2135,
+      "std": 1.1694,
+      "min": 27.35,
+      "max": 35.0
+    }
+  },
+  "features": {
+    "ndvi": {
+      "mean": 0.601296,
+      "std": 0.104101,
+      "min": 0.4016,
+      "max": 0.762,
+      "missing": 0,
+      "n_outliers_iqr": 0,
+      "corr_with_target": -0.103805
+    },
+    "ndbi": {
+      "mean": -0.253988,
+      "std": 0.033365,
+      "min": -0.3133,
+      "max": -0.1188,
+      "missing": 0,
+      "n_outliers_iqr": 73,
+      "corr_with_target": 0.017797
+    },
+    "mndwi": {
+      "mean": -0.008535,
+      "std": 0.017003,
+      "min": -0.0577,
+      "max": 0.034,
+      "missing": 0,
+      "n_outliers_iqr": 527,
+      "corr_with_target": -0.000593
+    },
+    "albedo": {
+      "mean": 0.170553,
+      "std": 0.012301,
+      "min": 0.1428,
+      "max": 0.1818,
+      "missing": 0,
+      "n_outliers_iqr": 134,
+      "corr_with_target": 0.034613
+    },
+    "built_up_fraction": {
+      "mean": 0.049032,
+      "std": 0.030554,
+      "min": 0.02,
+      "max": 0.1922,
+      "missing": 0,
+      "n_outliers_iqr": 36,
+      "corr_with_target": -0.003692
+    },
+    "impervious_fraction": {
+      "mean": 0.04511,
+      "std": 0.028109,
+      "min": 0.0184,
+      "max": 0.1768,
+      "missing": 0,
+      "n_outliers_iqr": 36,
+      "corr_with_target": -0.003706
+    },
+    "bare_fraction": {
+      "mean": 0.200023,
+      "std": 0.055415,
+      "min": 0.0479,
+      "max": 0.245,
+      "missing": 0,
+      "n_outliers_iqr": 0,
+      "corr_with_target": 0.034389
+    },
+    "vegetation_fraction": {
+      "mean": 0.743226,
+      "std": 0.057291,
+      "min": 0.6059,
+      "max": 0.855,
+      "missing": 0,
+      "n_outliers_iqr": 897,
+      "corr_with_target": -0.030314
+    },
+    "water_fraction": {
+      "mean": 0.007719,
+      "std": 0.018068,
+      "min": 0.0,
+      "max": 0.05,
+      "missing": 0,
+      "n_outliers_iqr": 536,
+      "corr_with_target": -0.00311
+    },
+    "road_density": {
+      "mean": 0.00131,
+      "std": 0.000495,
+      "min": 0.001,
+      "max": 0.00423,
+      "missing": 0,
+      "n_outliers_iqr": 219,
+      "corr_with_target": 0.000923
+    },
+    "elevation_m": {
+      "mean": 28.541935,
+      "std": 10.762715,
+      "min": 7.7,
+      "max": 45.0,
+      "missing": 0,
+      "n_outliers_iqr": 0,
+      "corr_with_target": -0.089645
+    },
+    "dist_to_water_m": {
+      "mean": 1323.178571,
+      "std": 1206.439577,
+      "min": 101.0,
+      "max": 9434.8,
+      "missing": 0,
+      "n_outliers_iqr": 144,
+      "corr_with_target": 0.001389
+    },
+    "dist_to_coast_m": {
+      "mean": 13923.887097,
+      "std": 8035.932395,
+      "min": 449.2,
+      "max": 27398.6,
+      "missing": 0,
+      "n_outliers_iqr": 0,
+      "corr_with_target": 0.060791
+    },
+    "population_density": {
+      "mean": 1611.579378,
+      "std": 1230.566733,
+      "min": 500.0,
+      "max": 6611.8,
+      "missing": 0,
+      "n_outliers_iqr": 35,
+      "corr_with_target": -0.029567
+    },
+    "night_lights": {
+      "mean": 4.443747,
+      "std": 3.017349,
+      "min": 2.0,
+      "max": 18.34,
+      "missing": 0,
+      "n_outliers_iqr": 76,
+      "corr_with_target": -0.018809
+    }
+  },
+  "high_correlation_pairs": [
+    {
+      "feature_a": "built_up_fraction",
+      "feature_b": "impervious_fraction",
+      "pearson_abs": 0.999999
+    },
+    {
+      "feature_a": "albedo",
+      "feature_b": "bare_fraction",
+      "pearson_abs": 0.974695
+    },
+    {
+      "feature_a": "impervious_fraction",
+      "feature_b": "road_density",
+      "pearson_abs": 0.952346
+    },
+    {
+      "feature_a": "built_up_fraction",
+      "feature_b": "road_density",
+      "pearson_abs": 0.952345
+    },
+    {
+      "feature_a": "albedo",
+      "feature_b": "vegetation_fraction",
+      "pearson_abs": 0.913594
+    },
+    {
+      "feature_a": "ndbi",
+      "feature_b": "vegetation_fraction",
+      "pearson_abs": 0.876349
+    }
+  ],
+  "valid_obs_count": {
+    "min": 19,
+    "max": 19,
+    "cells_below_5": 0
+  }
+}

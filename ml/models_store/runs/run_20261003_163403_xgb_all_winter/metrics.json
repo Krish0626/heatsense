@@ -1,0 +1,20 @@
+{
+  "season": "winter",
+  "train": {
+    "mae": 0.221837,
+    "rmse": 0.325226,
+    "r2": 0.92513
+  },
+  "val": {
+    "mae": 0.553343,
+    "rmse": 0.859457,
+    "r2": 0.363149
+  },
+  "overfitting": {
+    "flag": true,
+    "r2_gap": 0.562,
+    "rmse_ratio": 2.6426
+  },
+  "best_iteration": 126,
+  "training_time_s": 0.5
+}

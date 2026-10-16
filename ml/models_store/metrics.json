@@ -1,0 +1,35 @@
+{
+  "device": "cuda",
+  "run_id": "run_20261003_163403_xgb_all",
+  "trained_at": "2026-10-03T16:34:08.364088",
+  "seasons": {
+    "monsoon": {
+      "rmse": 0.675584,
+      "mae": 0.505447,
+      "r2": 0.639628,
+      "best_iteration": 122,
+      "training_time_s": 0.51
+    },
+    "post_monsoon": {
+      "rmse": 0.660914,
+      "mae": 0.4837,
+      "r2": 0.629068,
+      "best_iteration": 106,
+      "training_time_s": 0.49
+    },
+    "pre_monsoon": {
+      "rmse": 1.021752,
+      "mae": 0.739171,
+      "r2": 0.623764,
+      "best_iteration": 101,
+      "training_time_s": 0.46
+    },
+    "winter": {
+      "rmse": 0.859457,
+      "mae": 0.553343,
+      "r2": 0.363149,
+      "best_iteration": 126,
+      "training_time_s": 0.5
+    }
+  }
+}

@@ -1,0 +1,88 @@
+# HeatSense AI — Feature Configuration
+# Generated from dataset audit (d:/heatsense/data/processed/cell_features.parquet)
+# Actual column names in the parquet file are used here.
+
+# ─────────────────────────────────────────────────────────────
+# Target variable
+# ─────────────────────────────────────────────────────────────
+target: observed_lst_c       # Seasonal median daytime LST in °C
+
+# ─────────────────────────────────────────────────────────────
+# Selected features (15 total)
+# ─────────────────────────────────────────────────────────────
+features:
+  # Vegetation / water spectral indices
+  - ndvi                   # Normalised Difference Vegetation Index
+  - mndwi                  # Modified Normalised Difference Water Index
+
+  # Built-form spectral / surface
+  - ndbi                   # Normalised Difference Built-up Index
+  - albedo                 # Shortwave broadband albedo
+
+  # Land-cover fractions (from Dynamic World / WorldCover)
+  # NOTE: built_up_fraction and impervious_fraction are near-identical
+  #       (max diff 0.015, corr 0.9999).  Keep built_up_fraction; drop
+  #       impervious_fraction to avoid multicollinearity.
+  - built_up_fraction
+  - bare_fraction
+  - vegetation_fraction
+  - water_fraction
+
+  # Network / infrastructure
+  - road_density            # km of road per km² (OSM)
+
+  # Topography / location
+  - elevation_m             # SRTM 30 m DEM
+  - dist_to_water_m         # Distance to nearest water body (m)
+  - dist_to_coast_m         # Distance to Gulf of Khambhat coast (m)
+
+  # Socioeconomic
+  - population_density      # GHS-POP persons per km²
+  - night_lights            # VIIRS nighttime lights
+
+# ─────────────────────────────────────────────────────────────
+# Spatial identifier columns (preserved but NOT used as features)
+# ─────────────────────────────────────────────────────────────
+spatial_cols:
+  - cell_id
+  - centroid_x              # UTM-43N easting (m)
+  - centroid_y              # UTM-43N northing (m)
+
+meta_cols:
+  - season
+  - valid_obs_count         # Number of valid Landsat observations in composite
+
+# ─────────────────────────────────────────────────────────────
+# Excluded features and reasons
+# ─────────────────────────────────────────────────────────────
+excluded:
+  impervious_fraction:
+    reason: >
+      Correlation 0.9999 with built_up_fraction (max diff 0.0154).
+      Near-duplicate; retaining both inflates multicollinearity without
+      adding information. built_up_fraction is kept as it is more
+      semantically direct for urban heat attribution.
+
+# ─────────────────────────────────────────────────────────────
+# Leakage-risk notes
+# ─────────────────────────────────────────────────────────────
+leakage_notes: >
+  No feature is derived directly from observed_lst_c or from the thermal
+  Landsat band.  NDVI, NDBI, MNDWI, and albedo are derived from optical
+  (reflective) bands only.  Land-cover fractions come from Dynamic World /
+  WorldCover, not from thermal data.  Road density and elevation are
+  entirely independent of the thermal signal.  valid_obs_count is a data-
+  quality indicator and is excluded from model features.
+
+# ─────────────────────────────────────────────────────────────
+# Random seed (for reproducibility)
+# ─────────────────────────────────────────────────────────────
+random_seed: 42
+
+# ─────────────────────────────────────────────────────────────
+# Spatial block CV settings
+# ─────────────────────────────────────────────────────────────
+spatial_cv:
+  block_size_m: 2000        # 2 km blocks (28 x 27 km study area → ~14x13 blocks)
+  n_folds: 5
+  strategy: block_kfold     # Non-random spatial fold assignment

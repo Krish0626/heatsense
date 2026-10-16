@@ -1,0 +1,16 @@
+[
+  "ndvi",
+  "ndbi",
+  "mndwi",
+  "albedo",
+  "built_up_fraction",
+  "bare_fraction",
+  "vegetation_fraction",
+  "water_fraction",
+  "road_density",
+  "elevation_m",
+  "dist_to_water_m",
+  "dist_to_coast_m",
+  "population_density",
+  "night_lights"
+]
