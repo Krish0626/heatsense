@@ -61,10 +61,10 @@ export const MapView: React.FC<MapViewProps> = ({
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    // Center on Surat City, Gujarat (Tapi River, Ring Road, Athwa, Varachha)
+    // Center on Surat City, Gujarat covering full municipal bounds (Dumas to Sarthana, Katargam to Sachin)
     const map = L.map(mapContainerRef.current, {
-      center: [21.192, 72.830],
-      zoom: 13,
+      center: [21.175, 72.835],
+      zoom: 11,
       zoomControl: true,
     });
 
@@ -116,6 +116,15 @@ export const MapView: React.FC<MapViewProps> = ({
     tileLayerRef.current = newTileLayer;
   };
 
+  // Fit view to entire Surat region
+  const handleFitSurat = () => {
+    if (!mapInstanceRef.current) return;
+    mapInstanceRef.current.fitBounds([
+      [21.053, 72.704],
+      [21.296, 72.974],
+    ], { padding: [24, 24] });
+  };
+
   // Update cell polygons when season, cells, or filters change
   useEffect(() => {
     if (!mapInstanceRef.current || !layerGroupRef.current) return;
@@ -127,20 +136,32 @@ export const MapView: React.FC<MapViewProps> = ({
     displayCells.forEach((cell) => {
       const color = getTemperatureColor(cell.lst_c);
       const isSelected = selectedCell?.cell_id === cell.cell_id;
-      const size = 0.0055; // 100m-scale grid cell representation
+      const latHalf = 0.0042;
+      const lonHalf = 0.0043;
 
       // 100m grid cell polygon bounds
       const bounds: L.LatLngBoundsExpression = [
-        [cell.lat - size, cell.lon - size],
-        [cell.lat + size, cell.lon + size],
+        [cell.lat - latHalf, cell.lon - lonHalf],
+        [cell.lat + latHalf, cell.lon + lonHalf],
       ];
 
       const rect = L.rectangle(bounds, {
-        color: isSelected ? '#38bdf8' : (cell.is_hotspot ? '#ef4444' : color),
-        weight: isSelected ? 3.5 : (cell.is_hotspot ? 2.5 : 1.2),
+        color: isSelected ? '#38bdf8' : (cell.is_hotspot ? '#ef4444' : 'rgba(15, 23, 42, 0.3)'),
+        weight: isSelected ? 3.5 : (cell.is_hotspot ? 1.6 : 0.6),
         fillColor: color,
-        fillOpacity: isSelected ? 0.88 : (cell.is_hotspot ? 0.78 : 0.65),
+        fillOpacity: isSelected ? 0.95 : (cell.is_hotspot ? 0.82 : 0.68),
       });
+
+      // Bring selected cell to front so boundary is clearly highlighted
+      if (isSelected) {
+        setTimeout(() => {
+          try {
+            rect.bringToFront();
+          } catch {
+            // ignore if not yet mounted
+          }
+        }, 10);
+      }
 
       // Tooltip on hover
       rect.bindTooltip(
@@ -203,6 +224,26 @@ export const MapView: React.FC<MapViewProps> = ({
             {TILE_PROVIDERS[key].name}
           </button>
         ))}
+
+        <div style={{ width: '1px', background: 'var(--border-subtle)', margin: '2px 4px' }} />
+
+        <button
+          onClick={handleFitSurat}
+          title="Fit viewport to entire Surat municipal and metropolitan boundary"
+          style={{
+            background: 'rgba(99, 102, 241, 0.15)',
+            color: '#a5b4fc',
+            border: '1px solid rgba(99, 102, 241, 0.35)',
+            padding: '6px 10px',
+            borderRadius: '6px',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          🎯 Surat Extent (All Zones)
+        </button>
       </div>
 
       {/* Floating Map Legend (Bottom-Left) */}

@@ -10,7 +10,9 @@ import { BenchmarkView } from './components/BenchmarkView';
 export const App: React.FC = () => {
   const [currentSeason, setCurrentSeason] = useState<Season>('pre_monsoon');
   const [activeTab, setActiveTab] = useState<'map' | 'simulator' | 'pareto' | 'benchmarks'>('map');
-  const [selectedCell, setSelectedCell] = useState<GridCell | null>(null);
+  const [selectedCell, setSelectedCell] = useState<GridCell | null>(() => {
+    return SURAT_GRID_CELLS['pre_monsoon'].find((c) => c.is_hotspot) || SURAT_GRID_CELLS['pre_monsoon'][0] || null;
+  });
   const [showHotspotsOnly, setShowHotspotsOnly] = useState<boolean>(false);
 
   // Get current season cells
@@ -23,10 +25,10 @@ export const App: React.FC = () => {
 
   const handleSeasonChange = (season: Season) => {
     setCurrentSeason(season);
-    // Keep selected cell if exists in new season, otherwise clear
+    // Keep selected cell if exists in new season, otherwise select first hotspot
     if (selectedCell) {
       const match = SURAT_GRID_CELLS[season].find((c) => c.cell_id === selectedCell.cell_id);
-      setSelectedCell(match || null);
+      setSelectedCell(match || SURAT_GRID_CELLS[season].find((c) => c.is_hotspot) || null);
     }
   };
 
@@ -116,7 +118,7 @@ export const App: React.FC = () => {
           <div className="glass-panel kpi-card alert">
             <span className="kpi-label">Mean City Surface LST</span>
             <span className="kpi-value">{avgTemp}°C</span>
-            <span className="kpi-sub">Across 876 Surat analytical cells</span>
+            <span className="kpi-sub">Across {cells.length} Surat analytical cells</span>
           </div>
           <div className="glass-panel kpi-card hot">
             <span className="kpi-label">Peak Hotspot LST</span>

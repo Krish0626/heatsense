@@ -1,4 +1,5 @@
 import { GridCell, ModelBenchmark, ParetoSolution, Season, SHAPDriver } from '../types';
+import allSuratCellsData from './allSuratCells.json';
 
 // Real benchmark results from our fine-tuning & spatial cross-validation reports
 export const MODEL_BENCHMARKS: ModelBenchmark[] = [
@@ -24,49 +25,8 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
   { season: 'winter', model: 'ResNet-50', model_type: 'Deep Residual Transfer', val_mae: 1.504, val_rmse: 1.828, val_r2: -0.968, train_time_s: 37.74, best_epoch: 33 },
 ];
 
-// Surat representative 100m grid cell samples across central zones (Athwa, Rander, Varachha, Katargam, Udhna)
-export const SURAT_GRID_CELLS: Record<Season, GridCell[]> = {
-  pre_monsoon: [
-    { cell_id: 101, lat: 21.195, lon: 72.825, lst_c: 42.8, is_hotspot: true, anomaly_c: 4.4, ndvi: 0.08, ndbi: 0.48, albedo: 0.12, built_up_fraction: 0.82, vegetation_fraction: 0.05, bare_fraction: 0.13, road_density: 38.5, elevation_m: 16.5, dist_to_coast_m: 14200, dist_to_water_m: 420, population_density: 320 },
-    { cell_id: 102, lat: 21.202, lon: 72.835, lst_c: 43.6, is_hotspot: true, anomaly_c: 5.2, ndvi: 0.06, ndbi: 0.52, albedo: 0.10, built_up_fraction: 0.89, vegetation_fraction: 0.03, bare_fraction: 0.08, road_density: 42.1, elevation_m: 17.1, dist_to_coast_m: 15300, dist_to_water_m: 850, population_density: 410 },
-    { cell_id: 103, lat: 21.185, lon: 72.815, lst_c: 37.2, is_hotspot: false, anomaly_c: -1.2, ndvi: 0.38, ndbi: -0.05, albedo: 0.18, built_up_fraction: 0.25, vegetation_fraction: 0.65, bare_fraction: 0.10, road_density: 12.0, elevation_m: 14.8, dist_to_coast_m: 12800, dist_to_water_m: 90, population_density: 85 },
-    { cell_id: 104, lat: 21.215, lon: 72.845, lst_c: 44.2, is_hotspot: true, anomaly_c: 5.8, ndvi: 0.05, ndbi: 0.56, albedo: 0.09, built_up_fraction: 0.94, vegetation_fraction: 0.02, bare_fraction: 0.04, road_density: 46.3, elevation_m: 18.2, dist_to_coast_m: 16500, dist_to_water_m: 1200, population_density: 480 },
-    { cell_id: 105, lat: 21.170, lon: 72.795, lst_c: 35.8, is_hotspot: false, anomaly_c: -2.6, ndvi: 0.45, ndbi: -0.15, albedo: 0.20, built_up_fraction: 0.15, vegetation_fraction: 0.75, bare_fraction: 0.10, road_density: 8.5, elevation_m: 11.2, dist_to_coast_m: 8500, dist_to_water_m: 150, population_density: 40 },
-    { cell_id: 106, lat: 21.162, lon: 72.830, lst_c: 41.5, is_hotspot: true, anomaly_c: 3.1, ndvi: 0.12, ndbi: 0.38, albedo: 0.13, built_up_fraction: 0.72, vegetation_fraction: 0.10, bare_fraction: 0.18, road_density: 31.2, elevation_m: 15.0, dist_to_coast_m: 13900, dist_to_water_m: 650, population_density: 260 },
-    { cell_id: 107, lat: 21.220, lon: 72.810, lst_c: 39.1, is_hotspot: false, anomaly_c: 0.7, ndvi: 0.22, ndbi: 0.18, albedo: 0.16, built_up_fraction: 0.48, vegetation_fraction: 0.35, bare_fraction: 0.17, road_density: 22.4, elevation_m: 16.0, dist_to_coast_m: 13200, dist_to_water_m: 350, population_density: 175 },
-    { cell_id: 108, lat: 21.180, lon: 72.860, lst_c: 42.1, is_hotspot: true, anomaly_c: 3.7, ndvi: 0.09, ndbi: 0.42, albedo: 0.11, built_up_fraction: 0.78, vegetation_fraction: 0.08, bare_fraction: 0.14, road_density: 35.0, elevation_m: 18.5, dist_to_coast_m: 17200, dist_to_water_m: 1400, population_density: 310 },
-  ],
-  monsoon: [
-    { cell_id: 101, lat: 21.195, lon: 72.825, lst_c: 29.4, is_hotspot: true, anomaly_c: 1.8, ndvi: 0.22, ndbi: 0.30, albedo: 0.14, built_up_fraction: 0.82, vegetation_fraction: 0.15, bare_fraction: 0.03, road_density: 38.5, elevation_m: 16.5, dist_to_coast_m: 14200, dist_to_water_m: 420, population_density: 320 },
-    { cell_id: 102, lat: 21.202, lon: 72.835, lst_c: 30.1, is_hotspot: true, anomaly_c: 2.5, ndvi: 0.18, ndbi: 0.35, albedo: 0.12, built_up_fraction: 0.89, vegetation_fraction: 0.08, bare_fraction: 0.03, road_density: 42.1, elevation_m: 17.1, dist_to_coast_m: 15300, dist_to_water_m: 850, population_density: 410 },
-    { cell_id: 103, lat: 21.185, lon: 72.815, lst_c: 26.5, is_hotspot: false, anomaly_c: -1.1, ndvi: 0.55, ndbi: -0.20, albedo: 0.19, built_up_fraction: 0.25, vegetation_fraction: 0.75, bare_fraction: 0.00, road_density: 12.0, elevation_m: 14.8, dist_to_coast_m: 12800, dist_to_water_m: 90, population_density: 85 },
-    { cell_id: 104, lat: 21.215, lon: 72.845, lst_c: 30.8, is_hotspot: true, anomaly_c: 3.2, ndvi: 0.15, ndbi: 0.38, albedo: 0.11, built_up_fraction: 0.94, vegetation_fraction: 0.05, bare_fraction: 0.01, road_density: 46.3, elevation_m: 18.2, dist_to_coast_m: 16500, dist_to_water_m: 1200, population_density: 480 },
-    { cell_id: 105, lat: 21.170, lon: 72.795, lst_c: 25.2, is_hotspot: false, anomaly_c: -2.4, ndvi: 0.62, ndbi: -0.30, albedo: 0.21, built_up_fraction: 0.15, vegetation_fraction: 0.85, bare_fraction: 0.00, road_density: 8.5, elevation_m: 11.2, dist_to_coast_m: 8500, dist_to_water_m: 150, population_density: 40 },
-    { cell_id: 106, lat: 21.162, lon: 72.830, lst_c: 28.8, is_hotspot: false, anomaly_c: 1.2, ndvi: 0.26, ndbi: 0.25, albedo: 0.15, built_up_fraction: 0.72, vegetation_fraction: 0.22, bare_fraction: 0.06, road_density: 31.2, elevation_m: 15.0, dist_to_coast_m: 13900, dist_to_water_m: 650, population_density: 260 },
-    { cell_id: 107, lat: 21.220, lon: 72.810, lst_c: 27.2, is_hotspot: false, anomaly_c: -0.4, ndvi: 0.42, ndbi: 0.05, albedo: 0.18, built_up_fraction: 0.48, vegetation_fraction: 0.48, bare_fraction: 0.04, road_density: 22.4, elevation_m: 16.0, dist_to_coast_m: 13200, dist_to_water_m: 350, population_density: 175 },
-    { cell_id: 108, lat: 21.180, lon: 72.860, lst_c: 29.1, is_hotspot: true, anomaly_c: 1.5, ndvi: 0.20, ndbi: 0.28, albedo: 0.13, built_up_fraction: 0.78, vegetation_fraction: 0.18, bare_fraction: 0.04, road_density: 35.0, elevation_m: 18.5, dist_to_coast_m: 17200, dist_to_water_m: 1400, population_density: 310 },
-  ],
-  post_monsoon: [
-    { cell_id: 101, lat: 21.195, lon: 72.825, lst_c: 32.5, is_hotspot: true, anomaly_c: 2.1, ndvi: 0.18, ndbi: 0.35, albedo: 0.13, built_up_fraction: 0.82, vegetation_fraction: 0.12, bare_fraction: 0.06, road_density: 38.5, elevation_m: 16.5, dist_to_coast_m: 14200, dist_to_water_m: 420, population_density: 320 },
-    { cell_id: 102, lat: 21.202, lon: 72.835, lst_c: 33.4, is_hotspot: true, anomaly_c: 3.0, ndvi: 0.14, ndbi: 0.40, albedo: 0.11, built_up_fraction: 0.89, vegetation_fraction: 0.06, bare_fraction: 0.05, road_density: 42.1, elevation_m: 17.1, dist_to_coast_m: 15300, dist_to_water_m: 850, population_density: 410 },
-    { cell_id: 103, lat: 21.185, lon: 72.815, lst_c: 29.1, is_hotspot: false, anomaly_c: -1.3, ndvi: 0.48, ndbi: -0.12, albedo: 0.18, built_up_fraction: 0.25, vegetation_fraction: 0.68, bare_fraction: 0.07, road_density: 12.0, elevation_m: 14.8, dist_to_coast_m: 12800, dist_to_water_m: 90, population_density: 85 },
-    { cell_id: 104, lat: 21.215, lon: 72.845, lst_c: 34.1, is_hotspot: true, anomaly_c: 3.7, ndvi: 0.11, ndbi: 0.44, albedo: 0.10, built_up_fraction: 0.94, vegetation_fraction: 0.04, bare_fraction: 0.02, road_density: 46.3, elevation_m: 18.2, dist_to_coast_m: 16500, dist_to_water_m: 1200, population_density: 480 },
-    { cell_id: 105, lat: 21.170, lon: 72.795, lst_c: 28.2, is_hotspot: false, anomaly_c: -2.2, ndvi: 0.54, ndbi: -0.22, albedo: 0.20, built_up_fraction: 0.15, vegetation_fraction: 0.78, bare_fraction: 0.07, road_density: 8.5, elevation_m: 11.2, dist_to_coast_m: 8500, dist_to_water_m: 150, population_density: 40 },
-    { cell_id: 106, lat: 21.162, lon: 72.830, lst_c: 31.9, is_hotspot: true, anomaly_c: 1.5, ndvi: 0.20, ndbi: 0.31, albedo: 0.14, built_up_fraction: 0.72, vegetation_fraction: 0.18, bare_fraction: 0.10, road_density: 31.2, elevation_m: 15.0, dist_to_coast_m: 13900, dist_to_water_m: 650, population_density: 260 },
-    { cell_id: 107, lat: 21.220, lon: 72.810, lst_c: 30.0, is_hotspot: false, anomaly_c: -0.4, ndvi: 0.35, ndbi: 0.10, albedo: 0.17, built_up_fraction: 0.48, vegetation_fraction: 0.42, bare_fraction: 0.10, road_density: 22.4, elevation_m: 16.0, dist_to_coast_m: 13200, dist_to_water_m: 350, population_density: 175 },
-    { cell_id: 108, lat: 21.180, lon: 72.860, lst_c: 32.2, is_hotspot: true, anomaly_c: 1.8, ndvi: 0.16, ndbi: 0.33, albedo: 0.12, built_up_fraction: 0.78, vegetation_fraction: 0.14, bare_fraction: 0.08, road_density: 35.0, elevation_m: 18.5, dist_to_coast_m: 17200, dist_to_water_m: 1400, population_density: 310 },
-  ],
-  winter: [
-    { cell_id: 101, lat: 21.195, lon: 72.825, lst_c: 26.8, is_hotspot: true, anomaly_c: 1.9, ndvi: 0.12, ndbi: 0.42, albedo: 0.13, built_up_fraction: 0.82, vegetation_fraction: 0.08, bare_fraction: 0.10, road_density: 38.5, elevation_m: 16.5, dist_to_coast_m: 14200, dist_to_water_m: 420, population_density: 320 },
-    { cell_id: 102, lat: 21.202, lon: 72.835, lst_c: 27.5, is_hotspot: true, anomaly_c: 2.6, ndvi: 0.09, ndbi: 0.46, albedo: 0.11, built_up_fraction: 0.89, vegetation_fraction: 0.04, bare_fraction: 0.07, road_density: 42.1, elevation_m: 17.1, dist_to_coast_m: 15300, dist_to_water_m: 850, population_density: 410 },
-    { cell_id: 103, lat: 21.185, lon: 72.815, lst_c: 24.1, is_hotspot: false, anomaly_c: -0.8, ndvi: 0.40, ndbi: -0.08, albedo: 0.18, built_up_fraction: 0.25, vegetation_fraction: 0.62, bare_fraction: 0.13, road_density: 12.0, elevation_m: 14.8, dist_to_coast_m: 12800, dist_to_water_m: 90, population_density: 85 },
-    { cell_id: 104, lat: 21.215, lon: 72.845, lst_c: 28.3, is_hotspot: true, anomaly_c: 3.4, ndvi: 0.07, ndbi: 0.50, albedo: 0.10, built_up_fraction: 0.94, vegetation_fraction: 0.03, bare_fraction: 0.03, road_density: 46.3, elevation_m: 18.2, dist_to_coast_m: 16500, dist_to_water_m: 1200, population_density: 480 },
-    { cell_id: 105, lat: 21.170, lon: 72.795, lst_c: 23.2, is_hotspot: false, anomaly_c: -1.7, ndvi: 0.48, ndbi: -0.18, albedo: 0.20, built_up_fraction: 0.15, vegetation_fraction: 0.72, bare_fraction: 0.13, road_density: 8.5, elevation_m: 11.2, dist_to_coast_m: 8500, dist_to_water_m: 150, population_density: 40 },
-    { cell_id: 106, lat: 21.162, lon: 72.830, lst_c: 26.2, is_hotspot: false, anomaly_c: 1.3, ndvi: 0.15, ndbi: 0.35, albedo: 0.14, built_up_fraction: 0.72, vegetation_fraction: 0.12, bare_fraction: 0.16, road_density: 31.2, elevation_m: 15.0, dist_to_coast_m: 13900, dist_to_water_m: 650, population_density: 260 },
-    { cell_id: 107, lat: 21.220, lon: 72.810, lst_c: 24.8, is_hotspot: false, anomaly_c: -0.1, ndvi: 0.28, ndbi: 0.14, albedo: 0.17, built_up_fraction: 0.48, vegetation_fraction: 0.38, bare_fraction: 0.14, road_density: 22.4, elevation_m: 16.0, dist_to_coast_m: 13200, dist_to_water_m: 350, population_density: 175 },
-    { cell_id: 108, lat: 21.180, lon: 72.860, lst_c: 26.6, is_hotspot: true, anomaly_c: 1.7, ndvi: 0.11, ndbi: 0.39, albedo: 0.12, built_up_fraction: 0.78, vegetation_fraction: 0.10, bare_fraction: 0.12, road_density: 35.0, elevation_m: 18.5, dist_to_coast_m: 17200, dist_to_water_m: 1400, population_density: 310 },
-  ],
-};
+// Complete 868 analytical 100m grid cells covering the entire Surat municipal & metropolitan extent across all 4 seasons
+export const SURAT_GRID_CELLS: Record<Season, GridCell[]> = allSuratCellsData as unknown as Record<Season, GridCell[]>;
 
 // Compute TreeSHAP drivers dynamically for any cell
 export function getCellSHAPDrivers(cell: GridCell): SHAPDriver[] {
