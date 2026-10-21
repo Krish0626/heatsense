@@ -305,3 +305,84 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.15);
 }
+
+/* Custom Leaflet Area Markers & Badges */
+.custom-area-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.area-map-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10, 15, 29, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  user-select: none;
+}
+
+.area-map-badge:hover {
+  transform: translate(-50%, -55%) scale(1.08);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+  z-index: 1000 !important;
+}
+
+.area-map-badge.is-hotspot {
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+  animation: hotspotPulse 2.8s infinite ease-in-out;
+}
+
+.area-map-badge.is-hotspot:hover {
+  border-color: #ef4444;
+  box-shadow: 0 6px 22px rgba(239, 68, 68, 0.6);
+}
+
+@keyframes hotspotPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(239, 68, 68, 0.7);
+  }
+}
+
+.quick-hotspot-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.quick-hotspot-pill:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--accent-cyan);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.quick-hotspot-pill.active {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: #ef4444;
+  color: #fff;
+}

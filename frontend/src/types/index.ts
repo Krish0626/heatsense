@@ -7,6 +7,8 @@ export interface GridCell {
   lst_c: number;
   is_hotspot: boolean;
   anomaly_c: number;
+  area_name?: string;
+  zone_name?: string;
   ndvi: number;
   ndbi: number;
   albedo: number;

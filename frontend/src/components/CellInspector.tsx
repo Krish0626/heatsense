@@ -33,13 +33,19 @@ export const CellInspector: React.FC<CellInspectorProps> = ({ cell }) => {
 
   return (
     <div className="glass-panel" style={{ padding: '20px', height: '100%', display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto' }}>
-      {/* Header with Hotspot Badge */}
+      {/* Header with Area Name & Hotspot Badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-            Cell #{cell.cell_id} · Surat Municipal Limits
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+            <span style={{ fontSize: '1.15rem' }}>📍</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent-cyan)', fontFamily: 'var(--font-display)' }}>
+              {cell.area_name || 'Surat Municipal Zone'}
+            </span>
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 700, fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
+            {cell.zone_name || 'Surat Municipal Corporation'} · Grid Cell #{cell.cell_id}
+          </div>
+          <div style={{ fontSize: '1.55rem', fontWeight: 700, fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>
             {cell.lst_c.toFixed(1)}°C{' '}
             <span style={{ fontSize: '0.9rem', color: cell.anomaly_c > 0 ? '#ef4444' : '#10b981', fontWeight: 600 }}>
               ({cell.anomaly_c > 0 ? '+' : ''}{cell.anomaly_c.toFixed(1)}°C anomaly)
@@ -47,11 +53,11 @@ export const CellInspector: React.FC<CellInspectorProps> = ({ cell }) => {
           </div>
         </div>
         {cell.is_hotspot ? (
-          <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>
+          <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.5)', padding: '5px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 700, boxShadow: '0 0 15px rgba(239, 68, 68, 0.3)' }}>
             🔥 HOTSPOT
           </span>
         ) : (
-          <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.4)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 600 }}>
+          <span style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.4)', padding: '5px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 600 }}>
             NORMAL RANGE
           </span>
         )}
@@ -143,7 +149,7 @@ export const CellInspector: React.FC<CellInspectorProps> = ({ cell }) => {
       {/* AI Synthesis Summary */}
       <div style={{ background: 'rgba(56, 189, 248, 0.08)', border: '1px solid rgba(56, 189, 248, 0.2)', padding: '12px', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
         <strong style={{ color: 'var(--accent-cyan)' }}>🧠 Explainability Insight:</strong>{' '}
-        This cell's elevated thermal anomaly (+{cell.anomaly_c.toFixed(1)}°C) is primarily driven by{' '}
+        In <strong style={{ color: 'var(--accent-cyan)' }}>{cell.area_name || 'this sector'}</strong>, this cell's thermal anomaly ({cell.anomaly_c > 0 ? '+' : ''}{cell.anomaly_c.toFixed(1)}°C) is primarily driven by{' '}
         <strong style={{ color: '#fff' }}>high built-up density ({(cell.built_up_fraction * 100).toFixed(0)}%)</strong> and{' '}
         <strong style={{ color: '#fff' }}>low vegetative cover (NDVI: {cell.ndvi.toFixed(2)})</strong>. Adding cool roofs or tree canopy will produce the highest cooling leverage.
       </div>
