@@ -84,9 +84,10 @@ export const MapView: React.FC<MapViewProps> = ({
   const labelLayerGroupRef = useRef<L.LayerGroup | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
 
-  const [activeTile, setActiveTile] = useState<TileKey>('satellite');
+  const [activeTile, setActiveTile] = useState<TileKey>('osm');
   const [layerMode, setLayerMode] = useState<LayerMode>('heatmap');
   const [showAreaLabels, setShowAreaLabels] = useState<boolean>(true);
+  const [currentZoom, setCurrentZoom] = useState<number>(11);
 
   // Compute live Area stats (Peak LST & Hotspot status per area) from current season cells
   const areaStats = useMemo(() => {
@@ -129,8 +130,8 @@ export const MapView: React.FC<MapViewProps> = ({
       zoomControl: true,
     });
 
-    // Basemap Layer
-    const provider = TILE_PROVIDERS['satellite'];
+    // Basemap Layer (Default to OSM clean street map matching reference image)
+    const provider = TILE_PROVIDERS['osm'];
     const tileLayer = L.tileLayer(provider.url, {
       attribution: provider.attribution,
       maxZoom: provider.maxZoom,
@@ -138,6 +139,11 @@ export const MapView: React.FC<MapViewProps> = ({
     }).addTo(map);
 
     tileLayerRef.current = tileLayer;
+
+    // Listen to zoom events to dynamically adapt label density
+    map.on('zoomend', () => {
+      setCurrentZoom(map.getZoom());
+    });
 
     // Grid layer group (polygons)
     const gridGroup = L.layerGroup().addTo(map);
@@ -209,25 +215,35 @@ export const MapView: React.FC<MapViewProps> = ({
     }
 
     if (layerMode === 'heatmap' || layerMode === 'combined') {
-      // In the continuous heatmap layer, ALWAYS keep the full spatial field so there are no empty gaps or random dots!
-      // When showHotspotsOnly is enabled, highlight hotspots by softening non-hotspots while keeping the terrain unbroken.
-      const heatPoints: Array<[number, number, number]> = cells.map((c) => {
-        const baseNorm = Math.max(0.15, Math.min(1.0, (c.lst_c - 26) / 19));
-        const intensity = showHotspotsOnly ? (c.is_hotspot ? baseNorm : baseNorm * 0.22) : baseNorm;
-        return [c.lat, c.lon, intensity];
-      });
+      const temps = cells.map((c) => c.lst_c);
+      const maxTemp = Math.max(...temps);
+      const meanTemp = temps.reduce((a, b) => a + b, 0) / temps.length;
+
+      // Organic thermal anomaly threshold matching reference Image 2:
+      // Areas below (meanTemp - 0.4°C) are cool/green buffers and stay 100% transparent.
+      // Areas above threshold progressively emit soft blue -> cyan -> yellow -> orange -> glowing red!
+      const threshold = meanTemp - 0.4;
+
+      const heatPoints: Array<[number, number, number]> = cells
+        .filter((c) => c.lst_c > threshold)
+        .map((c) => {
+          const norm = Math.max(0, Math.min(1.0, (c.lst_c - threshold) / (maxTemp - threshold)));
+          // Non-linear power curve so peak hotspots form vivid red/orange cores surrounded by soft blue/cyan halos
+          const intensity = Math.pow(norm, 1.4);
+          return [c.lat, c.lon, intensity];
+        });
 
       const heatLayer = new ThermalHeatLayer(heatPoints, {
-        minOpacity: layerMode === 'combined' ? 0.35 : 0.60,
+        minOpacity: 0.0,
         maxZoom: 16,
         max: 1.0,
         gradient: {
-          0.12: '#2563eb', // Cool Blue
-          0.30: '#06b6d4', // Cyan
-          0.50: '#10b981', // Green
-          0.68: '#facc15', // Yellow
-          0.82: '#f97316', // Orange
-          1.00: '#ef4444', // Glowing Hotspot Red (Matches reference image)
+          0.10: '#3b82f6', // Soft translucent blue halo
+          0.28: '#06b6d4', // Cyan
+          0.48: '#10b981', // Emerald green
+          0.66: '#facc15', // Bright yellow
+          0.82: '#f97316', // Vibrant orange
+          1.00: '#ef4444', // Glowing red hotspot core (exact match to Image 2)
         },
       });
 
@@ -324,7 +340,7 @@ export const MapView: React.FC<MapViewProps> = ({
     });
   }, [cells, selectedCell, showHotspotsOnly, layerMode, onSelectCell]);
 
-  // 7. Update Area Markers & Badges on Map
+  // 7. Update Area Markers & Badges on Map (Zoom-aware to prevent clumping)
   useEffect(() => {
     if (!mapInstanceRef.current || !labelLayerGroupRef.current) return;
     const labelGroup = labelLayerGroupRef.current;
@@ -332,12 +348,19 @@ export const MapView: React.FC<MapViewProps> = ({
 
     if (!showAreaLabels) return;
 
-    areaStats.forEach((area) => {
+    // Filter labels based on zoom:
+    // When zoomed out (whole city view <= 12), ONLY show top 5 major dispersed anchor hotspots to prevent overlapping
+    // When zoomed in (zoom >= 13), show all localized neighborhood markers
+    const visibleAreas = currentZoom >= 13
+      ? areaStats
+      : areaStats.filter((a) => ['pandesara', 'varachha', 'katargam', 'sachin', 'citycore'].includes(a.id));
+
+    visibleAreas.forEach((area) => {
       const isSelected = selectedCell && Math.hypot(selectedCell.lat - area.lat, (selectedCell.lon - area.lon) * 0.93) < 0.02;
 
       const markerHtml = `
         <div class="area-map-badge ${area.isHotspot ? 'is-hotspot' : ''}" style="${isSelected ? 'border-color: #38bdf8 !important; transform: translate(-50%, -55%) scale(1.12);' : ''}">
-          <span style="font-size: 12px;">${area.isHotspot ? '🔥' : '📍'}</span>
+          <span style="font-size: 11px;">${area.isHotspot ? '🔥' : '📍'}</span>
           <span style="font-size: 11px; font-weight: 700; color: #f8fafc;">${area.name}</span>
           <span style="font-size: 10px; font-weight: 700; color: ${area.isHotspot ? '#fca5a5' : '#38bdf8'}; background: rgba(0,0,0,0.35); padding: 1px 5px; border-radius: 4px;">
             ${area.peakLst.toFixed(1)}°C
@@ -360,7 +383,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
       labelGroup.addLayer(marker);
     });
-  }, [areaStats, showAreaLabels, selectedCell]);
+  }, [areaStats, showAreaLabels, selectedCell, currentZoom]);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '540px', display: 'flex', flexDirection: 'column' }}>

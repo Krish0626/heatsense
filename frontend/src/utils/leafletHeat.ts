@@ -105,7 +105,7 @@ class SimpleHeatCanvas {
     return this;
   }
 
-  draw(minOpacity: number = 0.05) {
+  draw(_minOpacity: number = 0.05) {
     if (!this.circleCanvas) {
       this.setRadius(this.defaultRadius, 15);
     }
@@ -120,7 +120,9 @@ class SimpleHeatCanvas {
 
     for (const point of this.data) {
       const [x, y, intensity] = point;
-      ctx.globalAlpha = Math.max(Math.min(intensity / this.maxVal, 1.0), minOpacity);
+      if (intensity < 0.02) continue;
+      // Weight each point gently so only dense clusters of hot cells accumulate to deep red
+      ctx.globalAlpha = Math.min(0.42, Math.pow(intensity / this.maxVal, 1.4) * 0.42);
       ctx.drawImage(this.circleCanvas!, x - totalR, y - totalR);
     }
 
@@ -131,10 +133,12 @@ class SimpleHeatCanvas {
     for (let i = 0, len = pixels.length; i < len; i += 4) {
       const alpha = pixels[i + 3];
       if (alpha > 0) {
-        const offset = alpha * 4;
-        pixels[i] = grad[offset];
-        pixels[i + 1] = grad[offset + 1];
-        pixels[i + 2] = grad[offset + 2];
+        const offset = Math.min(alpha, 255) * 4;
+        pixels[i] = grad[offset] || 0;
+        pixels[i + 1] = grad[offset + 1] || 0;
+        pixels[i + 2] = grad[offset + 2] || 0;
+        // Soft edge blending matching reference Image 2
+        pixels[i + 3] = Math.round(Math.min(alpha * 0.88, 220));
       }
     }
 
@@ -252,9 +256,9 @@ export class ThermalHeatLayer extends L.Layer {
     const pNeighbor = map.latLngToContainerPoint([21.175 + 0.0089, 72.835 + 0.0090]);
     const stepDist = Math.hypot(pNeighbor.x - pCenter.x, pNeighbor.y - pCenter.y) || 45;
 
-    // Radius must overlap stepDist by 1.6x - 1.8x so adjacent cells blend seamlessly into a continuous thermal field
-    const dynamicRadius = Math.max(38, Math.round(stepDist * 1.65));
-    const dynamicBlur = Math.max(28, Math.round(stepDist * 1.35));
+    // Radius tuned so points in a hotspot form a smooth organic plume without flooding the entire city
+    const dynamicRadius = Math.max(26, Math.round(stepDist * 1.15));
+    const dynamicBlur = Math.max(22, Math.round(stepDist * 0.95));
     this.heat.setRadius(dynamicRadius, dynamicBlur);
 
     const totalRadius = dynamicRadius + dynamicBlur;
@@ -270,6 +274,6 @@ export class ThermalHeatLayer extends L.Layer {
     }
 
     this.heat.setData(points);
-    this.heat.draw(this.options.minOpacity || 0.45);
+    this.heat.draw(this.options.minOpacity ?? 0.0);
   }
 }
