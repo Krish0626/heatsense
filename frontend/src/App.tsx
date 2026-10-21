@@ -32,6 +32,47 @@ export const App: React.FC = () => {
     }
   };
 
+  const [showBriefModal, setShowBriefModal] = useState<boolean>(false);
+
+  const handleExportReport = () => {
+    const reportData = {
+      project: 'HeatSense AI — Surat Urban Heat Mitigation & Decision Support System',
+      target_city: 'Surat, Gujarat, India',
+      season: currentSeason,
+      generated_at: new Date().toISOString(),
+      grid_resolution: '100m x 100m (868 analytical cells)',
+      city_summary: {
+        mean_lst_c: avgTemp,
+        peak_lst_c: maxTemp,
+        total_hotspots_count: hotspotCount,
+        max_cooling_feasibility_c: -4.5,
+      },
+      top_hotspots: cells
+        .filter((c) => c.is_hotspot)
+        .sort((a, b) => b.lst_c - a.lst_c)
+        .slice(0, 20)
+        .map((c) => ({
+          cell_id: c.cell_id,
+          area_name: c.area_name,
+          zone_name: c.zone_name,
+          observed_lst_c: c.lst_c,
+          thermal_anomaly_c: c.anomaly_c,
+          built_up_fraction: c.built_up_fraction,
+          ndvi: c.ndvi,
+          primary_driver: c.built_up_fraction > 0.7 ? 'High Impervious Surface' : 'Low Vegetation Cover',
+          recommended_intervention: c.built_up_fraction > 0.7 ? 'High-Albedo Cool Roof Coating' : 'Urban Tree Canopy Planting',
+        })),
+    };
+
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `HeatSense_Surat_Assessment_${currentSeason}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', background: 'var(--bg-main)' }}>
       {/* Top Application Header */}
@@ -107,6 +148,52 @@ export const App: React.FC = () => {
             title="Winter (Dec–Feb)"
           >
             ❄️ Winter
+          </button>
+        </div>
+
+        {/* Action Controls: Policy Brief & Export Report */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button
+            onClick={() => setShowBriefModal(true)}
+            style={{
+              background: 'rgba(99, 102, 241, 0.18)',
+              color: '#c7d2fe',
+              border: '1px solid rgba(99, 102, 241, 0.4)',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease',
+            }}
+            title="View Surat Municipal Action Plan & Policy Brief"
+          >
+            <span>📋</span>
+            <span>Policy Brief</span>
+          </button>
+          <button
+            onClick={handleExportReport}
+            style={{
+              background: 'rgba(16, 185, 129, 0.18)',
+              color: '#6ee7b7',
+              border: '1px solid rgba(16, 185, 129, 0.4)',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease',
+            }}
+            title="Download complete assessment report as JSON"
+          >
+            <span>📥</span>
+            <span>Export Assessment</span>
           </button>
         </div>
       </header>
@@ -190,6 +277,163 @@ export const App: React.FC = () => {
           )}
         </div>
       </main>
+
+      {/* Municipal Policy Brief & Executive Summary Modal */}
+      {showBriefModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+          }}
+          onClick={() => setShowBriefModal(false)}
+        >
+          <div
+            className="glass-panel"
+            style={{
+              width: '100%',
+              maxWidth: '740px',
+              maxHeight: '85vh',
+              overflowY: 'auto',
+              padding: '28px',
+              background: 'rgba(15, 23, 42, 0.95)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent-cyan)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Surat Municipal Corporation (SMC) · Decision Support
+                </div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 700, fontFamily: 'var(--font-display)', color: 'var(--text-primary)', marginTop: '2px' }}>
+                  Surat Urban Heat Action & Mitigation Brief
+                </h2>
+              </div>
+              <button
+                onClick={() => setShowBriefModal(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  fontSize: '1.2rem',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px', borderRadius: '8px' }}>
+                <div style={{ fontSize: '0.7rem', color: '#fca5a5' }}>Peak Hotspot LST</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#ef4444' }}>{maxTemp}°C</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Pandesara / Varachha</div>
+              </div>
+              <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '10px', borderRadius: '8px' }}>
+                <div style={{ fontSize: '0.7rem', color: '#fde68a' }}>Critical Hotspots</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f59e0b' }}>{hotspotCount} Cells</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>100m analytical zones</div>
+              </div>
+              <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '10px', borderRadius: '8px' }}>
+                <div style={{ fontSize: '0.7rem', color: '#a7f3d0' }}>Max Cooling Target</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#10b981' }}>-4.5°C</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Combined Green-Cool</div>
+              </div>
+              <div style={{ background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.3)', padding: '10px', borderRadius: '8px' }}>
+                <div style={{ fontSize: '0.7rem', color: '#c7d2fe' }}>Pareto Optimal Budget</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#818cf8' }}>₹54.0 L</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Balanced Plan (310 Cells)</div>
+              </div>
+            </div>
+
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+              🎯 Top 4 Priority Intervention Wards
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              <div style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid var(--border-subtle)', padding: '10px 14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <strong style={{ color: '#ef4444' }}>1. Pandesara GIDC Industrial Cluster (South Zone)</strong>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Primary driver: 95% built-up impervious concrete & chemical/dyeing industrial sheds.</div>
+                </div>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#ef4444' }}>45.8°C (+6.5°C)</span>
+              </div>
+              <div style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid var(--border-subtle)', padding: '10px 14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <strong style={{ color: '#f97316' }}>2. Varachha Diamond Hub (East Zone)</strong>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Primary driver: Extreme building density, narrow street canyons & zero vegetative cover (NDVI 0.06).</div>
+                </div>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f97316' }}>45.8°C (+6.5°C)</span>
+              </div>
+              <div style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid var(--border-subtle)', padding: '10px 14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <strong style={{ color: '#f59e0b' }}>3. Katargam Core & Ved Road Craft Hub (North Zone)</strong>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Primary driver: Diamond cutting workshops with high thermal emissivity and unshaded rooftops.</div>
+                </div>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f59e0b' }}>45.3°C (+6.0°C)</span>
+              </div>
+              <div style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid var(--border-subtle)', padding: '10px 14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <strong style={{ color: '#f59e0b' }}>4. Begampura & Central Ring Road (Central Zone)</strong>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Primary driver: Wholesale textile market traffic density & low surface reflectance (Albedo 0.09).</div>
+                </div>
+                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f59e0b' }}>44.7°C (+5.4°C)</span>
+              </div>
+            </div>
+
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+              🌱 Recommended 3-Tier Action Plan
+            </h3>
+            <ul style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.6, paddingLeft: '20px', marginBottom: '24px' }}>
+              <li><strong>Tier 1 — High-Albedo Cool Roof Mandate:</strong> Subsidized lime-wash and reflective membranes on 2,500 industrial and tin-roof residential units in Pandesara & Varachha (Cost: ₹125/m², Cooling: ~1.5°C).</li>
+              <li><strong>Tier 2 — Urban Tree Canopy Afforestation:</strong> Native fast-growing shade species (Neem, Gulmohar, Peepal) planted along Udhna-Navsari highway, Ring Road, and canal corridors (Cooling: ~2.3°C).</li>
+              <li><strong>Tier 3 — Permeable Cool Pavements:</strong> High-reflectance porous paving blocks in parking zones and textile transit nodes to reduce ground solar absorption.</li>
+            </ul>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={handleExportReport}
+                style={{
+                  background: 'var(--accent-emerald)',
+                  color: '#070b14',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                📥 Download Full Assessment (.json)
+              </button>
+              <button
+                onClick={() => setShowBriefModal(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  color: '#fff',
+                  border: '1px solid var(--border-subtle)',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
