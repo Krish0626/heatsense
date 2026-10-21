@@ -85,7 +85,7 @@ export const MapView: React.FC<MapViewProps> = ({
   const tileLayerRef = useRef<L.TileLayer | null>(null);
 
   const [activeTile, setActiveTile] = useState<TileKey>('satellite');
-  const [layerMode, setLayerMode] = useState<LayerMode>('combined');
+  const [layerMode, setLayerMode] = useState<LayerMode>('heatmap');
   const [showAreaLabels, setShowAreaLabels] = useState<boolean>(true);
 
   // Compute live Area stats (Peak LST & Hotspot status per area) from current season cells
@@ -209,23 +209,20 @@ export const MapView: React.FC<MapViewProps> = ({
     }
 
     if (layerMode === 'heatmap' || layerMode === 'combined') {
-      const displayCells = showHotspotsOnly ? cells.filter((c) => c.is_hotspot) : cells;
-
-      // Format heat points: [lat, lon, normalized_intensity]
-      const heatPoints: Array<[number, number, number]> = displayCells.map((c) => {
-        // Temperature range normalized 26°C -> 46°C
-        const intensity = Math.max(0.12, Math.min(1.0, (c.lst_c - 26) / 19));
+      // In the continuous heatmap layer, ALWAYS keep the full spatial field so there are no empty gaps or random dots!
+      // When showHotspotsOnly is enabled, highlight hotspots by softening non-hotspots while keeping the terrain unbroken.
+      const heatPoints: Array<[number, number, number]> = cells.map((c) => {
+        const baseNorm = Math.max(0.15, Math.min(1.0, (c.lst_c - 26) / 19));
+        const intensity = showHotspotsOnly ? (c.is_hotspot ? baseNorm : baseNorm * 0.22) : baseNorm;
         return [c.lat, c.lon, intensity];
       });
 
       const heatLayer = new ThermalHeatLayer(heatPoints, {
-        radius: 36,
-        blur: 26,
-        minOpacity: layerMode === 'combined' ? 0.45 : 0.65,
+        minOpacity: layerMode === 'combined' ? 0.35 : 0.60,
         maxZoom: 16,
         max: 1.0,
         gradient: {
-          0.12: '#3b82f6', // Cool Blue
+          0.12: '#2563eb', // Cool Blue
           0.30: '#06b6d4', // Cyan
           0.50: '#10b981', // Green
           0.68: '#facc15', // Yellow
@@ -265,11 +262,11 @@ export const MapView: React.FC<MapViewProps> = ({
 
       if (layerMode === 'heatmap') {
         fillOpacity = isSelected ? 0.35 : 0.001; // transparent hitboxes for heatmap mode
-        strokeOpacity = isSelected ? 1 : 0;
-        weight = isSelected ? 3.5 : 0;
+        strokeOpacity = isSelected ? 1 : (cell.is_hotspot && showHotspotsOnly ? 0.75 : 0);
+        weight = isSelected ? 3.5 : (cell.is_hotspot && showHotspotsOnly ? 1.5 : 0);
       } else if (layerMode === 'combined') {
-        fillOpacity = isSelected ? 0.5 : 0.18;
-        strokeOpacity = isSelected ? 1 : 0.3;
+        fillOpacity = isSelected ? 0.45 : 0.12;
+        strokeOpacity = isSelected ? 1 : (cell.is_hotspot ? 0.75 : 0.2);
         weight = isSelected ? 3.5 : (cell.is_hotspot ? 1.4 : 0.4);
       } else {
         // Grid mode

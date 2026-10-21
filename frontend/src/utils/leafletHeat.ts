@@ -61,8 +61,12 @@ class SimpleHeatCanvas {
   }
 
   setRadius(r: number, blur?: number) {
+    const targetBlur = blur !== undefined ? blur : 15;
+    if (this.circleRadius === r && this.circleBlur === targetBlur && this.circleCanvas) {
+      return this;
+    }
     this.circleRadius = r;
-    this.circleBlur = blur !== undefined ? blur : 15;
+    this.circleBlur = targetBlur;
 
     const circle = (this.circleCanvas = document.createElement('canvas'));
     const ctx = circle.getContext('2d')!;
@@ -242,8 +246,19 @@ export class ThermalHeatLayer extends L.Layer {
     if (!this.heat || !(this as any)._map) return;
     const map = (this as any)._map as L.Map;
     const size = map.getSize();
-    const radius = (this.options.radius || 32) + (this.options.blur || 24);
-    const bounds = new L.Bounds(L.point([-radius, -radius]), size.add([radius, radius]));
+
+    // Dynamically calculate cell spacing in screen pixels to scale radius & blur
+    const pCenter = map.latLngToContainerPoint([21.175, 72.835]);
+    const pNeighbor = map.latLngToContainerPoint([21.175 + 0.0089, 72.835 + 0.0090]);
+    const stepDist = Math.hypot(pNeighbor.x - pCenter.x, pNeighbor.y - pCenter.y) || 45;
+
+    // Radius must overlap stepDist by 1.6x - 1.8x so adjacent cells blend seamlessly into a continuous thermal field
+    const dynamicRadius = Math.max(38, Math.round(stepDist * 1.65));
+    const dynamicBlur = Math.max(28, Math.round(stepDist * 1.35));
+    this.heat.setRadius(dynamicRadius, dynamicBlur);
+
+    const totalRadius = dynamicRadius + dynamicBlur;
+    const bounds = new L.Bounds(L.point([-totalRadius, -totalRadius]), size.add([totalRadius, totalRadius]));
 
     const points: Array<[number, number, number]> = [];
 
@@ -255,6 +270,6 @@ export class ThermalHeatLayer extends L.Layer {
     }
 
     this.heat.setData(points);
-    this.heat.draw(this.options.minOpacity || 0.25);
+    this.heat.draw(this.options.minOpacity || 0.45);
   }
 }
